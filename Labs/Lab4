@@ -1,0 +1,51 @@
+postgres=# CREATE TABLE students (
+postgres(#     student_id SERIAL PRIMARY KEY,
+postgres(#     first_name VARCHAR(50) NOT NULL,
+postgres(#     last_name VARCHAR(50) NOT NULL,
+postgres(#     email VARCHAR(100) UNIQUE NOT NULL,
+postgres(#     faculty VARCHAR(100)
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=# DROP TABLE IF EXISTS students;
+DROP TABLE
+postgres=# CREATE TABLE students (
+postgres(#     student_id SERIAL PRIMARY KEY,
+postgres(#     first_name VARCHAR(50) NOT NULL,
+postgres(#     last_name VARCHAR(50) NOT NULL,
+postgres(#     email VARCHAR(100) UNIQUE NOT NULL,
+postgres(#     faculty VARCHAR(100)
+postgres(# );
+CREATE TABLE
+postgres=# ALTER TABLE students
+postgres-# ADD COLUMN date_of_birth DATE;
+ALTER TABLE
+postgres=# ALTER TABLE students
+postgres-# DROP COLUMN faculty;
+ALTER TABLE
+postgres=#
+postgres=#
+postgres=# ALTER TABLE students
+postgres-# ALTER COLUMN first_name TYPE TEXT;
+ALTER TABLE
+postgres=#
+postgres=#
+postgres=# ALTER TABLE students
+postgres-# ADD CONSTRAINT unique_student_email UNIQUE (email);
+ALTER TABLE
+postgres=#
+postgres=# ALTER TABLE students
+postgres-# RENAME COLUMN email TO email_address;
+ALTER TABLE
+postgres=#
+postgres=# ALTER TABLE students
+postgres-# RENAME TO university_students;
+ALTER TABLE
+postgres=#
+postgres=# SELECT * FROM university_students;
+ student_id | first_name | last_name | email_address | date_of_birth
+------------+------------+-----------+---------------+---------------
+(0 rows)
+
+
+postgres=#
