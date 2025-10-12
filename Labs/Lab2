@@ -1,0 +1,55 @@
+postgres=# CREATE TABLE students (
+postgres(#     id SERIAL PRIMARY KEY,
+postgres(#     name VARCHAR(100),
+postgres(#     email VARCHAR(100),
+postgres(#     faculty VARCHAR(100)
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=#
+postgres=# INSERT INTO students (name, email, faculty) VALUES ('qwe', 'qwe@auca.kg', 'com-42'), ('rty', 'rty@auca.kg', 'com-76'), ('asd', 'asd@auca.kg', 'com-66');
+INSERT 0 3
+postgres=#
+postgres=# SELECT name, email FROM students WHERE faculty = 'com-66';
+ name |    email
+------+-------------
+ asd  | asd@auca.kg
+(1 row)
+
+
+postgres=# SELECT name, email FROM students;
+ name |    email
+------+-------------
+ qwe  | qwe@auca.kg
+ rty  | rty@auca.kg
+ asd  | asd@auca.kg
+(3 rows)
+
+
+postgres=#
+postgres=# SELECT name, email FROM students WHERE name = 'qwe';
+ name |    email
+------+-------------
+ qwe  | qwe@auca.kg
+(1 row)
+
+
+postgres=#
+postgres=# SELECT name, email FROM students ORDER BY name;
+ name |    email
+------+-------------
+ asd  | asd@auca.kg
+ qwe  | qwe@auca.kg
+ rty  | rty@auca.kg
+(3 rows)
+
+
+postgres=# SELECT name, email FROM students LIMIT 2;
+ name |    email
+------+-------------
+ qwe  | qwe@auca.kg
+ rty  | rty@auca.kg
+(2 rows)
+
+
+postgres=#
