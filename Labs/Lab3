@@ -1,0 +1,26 @@
+postgres=# CREATE DATABASE university;
+CREATE DATABASE
+postgres=#
+postgres=# \l
+                                                                  List of databases
+    Name    |  Owner   | Encoding | Locale Provider |         Collate         |          Ctype          | Locale | ICU Rules |   Access privileges
+------------+----------+----------+-----------------+-------------------------+-------------------------+--------+-----------+-----------------------
+ postgres   | postgres | UTF8     | libc            | Russian_Kyrgyzstan.1251 | Russian_Kyrgyzstan.1251 |        |           |
+ template0  | postgres | UTF8     | libc            | Russian_Kyrgyzstan.1251 | Russian_Kyrgyzstan.1251 |        |           | =c/postgres          +
+            |          |          |                 |                         |                         |        |           | postgres=CTc/postgres
+ template1  | postgres | UTF8     | libc            | Russian_Kyrgyzstan.1251 | Russian_Kyrgyzstan.1251 |        |           | =c/postgres          +
+            |          |          |                 |                         |                         |        |           | postgres=CTc/postgres
+ university | postgres | UTF8     | libc            | Russian_Kyrgyzstan.1251 | Russian_Kyrgyzstan.1251 |        |           |
+(4 rows)
+
+
+postgres=# \c university
+You are now connected to database "university" as user "postgres".
+university=#
+university=#
+university=# \c postgres
+You are now connected to database "postgres" as user "postgres".
+postgres=#
+postgres=# DROP DATABASE university;
+DROP DATABASE
+postgres=#
