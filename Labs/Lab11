@@ -1,0 +1,466 @@
+postgres=# SELECT COUNT(*) AS total_employees
+postgres-# FROM employees;
+ total_employees
+-----------------
+               4
+(1 row)
+
+
+postgres=#
+postgres=#
+postgres=# SELECT COUNT(DISTINCT position) AS unique_position FROM employees;
+ unique_position
+-----------------
+               4
+(1 row)
+
+
+postgres=#
+postgres=# SELECT SUM(salary) AS total_salaries
+postgres-# FROM employees;
+ total_salaries
+----------------
+      295000.00
+(1 row)
+
+
+postgres=#
+postgres=#
+postgres=# SELECT department, SUM(sales_amount) AS total_sales
+postgres-# FROM sales_data
+postgres-# GROUP BY department;
+ department | total_sales
+------------+-------------
+ Finance    |   255000.00
+ Sales      |   325000.00
+ IT         |   182000.00
+ HR         |   112000.00
+(4 rows)
+
+
+postgres=# SELECT AVG(salary) AS average_salary
+postgres-# FROM employees;
+   average_salary
+--------------------
+ 73750.000000000000
+(1 row)
+
+
+postgres=#
+postgres=#
+postgres=# SELECT department, AVG(age) AS avg_age
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department |       avg_age
+------------+---------------------
+ Finance    | 39.0000000000000000
+ Sales      | 30.0000000000000000
+ IT         | 31.0000000000000000
+ HR         | 32.5000000000000000
+(4 rows)
+
+
+postgres=#
+postgres=#
+postgres=#
+postgres=#
+postgres=# SELECT
+postgres-#     MAX(salary) AS highest_salary,
+postgres-#     MIN(salary) AS lowest_salary
+postgres-# FROM employees;
+ highest_salary | lowest_salary
+----------------+---------------
+       72000.00 |      45000.00
+(1 row)
+
+
+postgres=# SELECT department, MAX(hire_date) AS latest_hire
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department | latest_hire
+------------+-------------
+ Finance    | 2024-05-25
+ Sales      | 2023-01-10
+ IT         | 2024-02-18
+ HR         | 2022-09-20
+(4 rows)
+
+
+postgres=#
+postgres=#
+postgres=#
+postgres=# SELECT department, STRING_AGG(name, ', ') AS employee_names FROM employees GROUP BY department;
+ department | employee_names
+------------+----------------
+ Finance    | George, Hannah
+ Sales      | Alice, Bob
+ IT         | Ethan, Fiona
+ HR         | Charlie, Diana
+(4 rows)
+
+
+postgres=#
+postgres=#
+postgres=# CREATE TABLE employee_skills (
+postgres(#     skill_id SERIAL PRIMARY KEY,
+postgres(#     employee_id INT NOT NULL,
+postgres(#     skill_name VARCHAR(100) NOT NULL,
+postgres(#     FOREIGN KEY (employee_id) REFERENCES employees(emp_id) ON DELETE CASCADE
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=# INSERT INTO employee_skills (employee_id, skill_name)
+postgres-# VALUES
+postgres-# (1, 'Communication'),
+postgres-# (1, 'Negotiation'),
+postgres-# (2, 'Sales Strategy'),
+postgres-# (2, 'Customer Service'),
+postgres-# (3, 'Recruiting'),
+postgres-# (3, 'Onboarding'),
+postgres-# (4, 'Conflict Resolution'),
+postgres-# (5, 'Python'),
+postgres-# (5, 'SQL'),
+postgres-# (6, 'Network Security'),
+postgres-# (6, 'Linux Administration'),
+postgres-# (7, 'Financial Analysis'),
+postgres-# (8, 'Budgeting');
+INSERT 0 13
+postgres=#
+postgres=#
+postgres=# SELECT employee_id, STRING_AGG(skill_name, ', ' ORDER BY skill_name) AS skills
+postgres-# FROM employee_skills
+postgres-# GROUP BY employee_id;
+ employee_id |                 skills
+-------------+----------------------------------------
+           1 | Communication, Negotiation
+           2 | Customer Service, Sales Strategy
+           3 | Onboarding, Recruiting
+           4 | Conflict Resolution
+           5 | Python, SQL
+           6 | Linux Administration, Network Security
+           7 | Financial Analysis
+           8 | Budgeting
+(8 rows)
+
+
+postgres=#
+postgres=# SELECT department, ARRAY_AGG(salary) AS salary_array
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department |    salary_array
+------------+---------------------
+ Finance    | {70000.00,72000.00}
+ Sales      | {50000.00,52000.00}
+ IT         | {60000.00,65000.00}
+ HR         | {45000.00,47000.00}
+(4 rows)
+
+
+postgres=#
+postgres=#
+postgres=# SELECT department, ARRAY_AGG(name ORDER BY age) AS employees FROM employees GROUP BY department;
+ department |    employees
+------------+-----------------
+ Finance    | {Hannah,George}
+ HR         | {Charlie,Diana}
+ IT         | {Ethan,Fiona}
+ Sales      | {Alice,Bob}
+(4 rows)
+
+
+postgres=#
+postgres=#
+postgres=# SELECT
+postgres-#     department,
+postgres-#     STDDEV(salary) AS salary_std_dev,
+postgres-#     VARIANCE(salary) AS salary_variance
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department |  salary_std_dev   |    salary_variance
+------------+-------------------+-----------------------
+ Finance    | 1414.213562373095 |  2000000.000000000000
+ Sales      | 1414.213562373095 |  2000000.000000000000
+ IT         | 3535.533905932738 | 12500000.000000000000
+ HR         | 1414.213562373095 |  2000000.000000000000
+(4 rows)
+
+
+postgres=#
+postgres=#
+postgres=# ALTER TABLE employees
+postgres-# ADD COLUMN experience_years INT;
+ALTER TABLE
+postgres=# UPDATE employees
+postgres-# SET experience_years = CASE emp_id
+postgres-#     WHEN 1 THEN 2
+postgres-#     WHEN 2 THEN 3
+postgres-#     WHEN 3 THEN 4
+postgres-#     WHEN 4 THEN 5
+postgres-#     WHEN 5 THEN 6
+postgres-#     WHEN 6 THEN 7
+postgres-#     WHEN 7 THEN 9
+postgres-#     WHEN 8 THEN 10
+postgres-# END;
+UPDATE 8
+postgres=#
+postgres=#
+postgres=# SELECT CORR(experience_years, salary) AS experience_salary_correlation
+postgres-# FROM employees;
+ experience_salary_correlation
+-------------------------------
+            0.8892892891271675
+(1 row)
+
+
+postgres=#
+postgres=#
+postgres=# CREATE TABLE products (
+postgres(#     product_id SERIAL PRIMARY KEY,
+postgres(#     product_name VARCHAR(100) NOT NULL,
+postgres(#     category VARCHAR(50) NOT NULL,
+postgres(#     price NUMERIC(10,2) NOT NULL
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=# INSERT INTO products (product_name, category, price)
+postgres-# VALUES
+postgres-# ('Laptop Lenovo', 'Electronics', 850.00),
+postgres-# ('Smartphone Samsung', 'Electronics', 650.00),
+postgres-# ('Headphones Sony', 'Electronics', 120.00),
+postgres-# ('Office Chair', 'Furniture', 200.00),
+postgres-# ('Wooden Desk', 'Furniture', 350.00),
+postgres-# ('Dining Table', 'Furniture', 500.00),
+postgres-# ('T-shirt', 'Clothing', 25.00),
+postgres-# ('Jeans', 'Clothing', 45.00),
+postgres-# ('Jacket', 'Clothing', 80.00),
+postgres-# ('Running Shoes', 'Footwear', 90.00),
+postgres-# ('Sandals', 'Footwear', 40.00);
+INSERT 0 11
+postgres=#
+postgres=#
+postgres=# SELECT
+postgres-#     category,
+postgres-#     COUNT(*) AS number_of_products,
+postgres-#     SUM(price) AS total_value,
+postgres-#     AVG(price) AS average_price
+postgres-# FROM products
+postgres-# GROUP BY category;
+  category   | number_of_products | total_value |    average_price
+-------------+--------------------+-------------+----------------------
+ Furniture   |                  3 |     1050.00 | 350.0000000000000000
+ Electronics |                  3 |     1620.00 | 540.0000000000000000
+ Footwear    |                  2 |      130.00 |  65.0000000000000000
+ Clothing    |                  3 |      150.00 |  50.0000000000000000
+(4 rows)
+
+
+postgres=#
+postgres=#
+postgres=# CREATE TABLE sales (
+postgres(#     sale_id SERIAL PRIMARY KEY,
+postgres(#     product_name VARCHAR(100),
+postgres(#     amount NUMERIC(10,2) NOT NULL,
+postgres(#     sale_date DATE NOT NULL
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=# INSERT INTO sales (product_name, amount, sale_date)
+postgres-# VALUES
+postgres-# ('Laptop Lenovo', 850.00, '2023-01-15'),
+postgres-# ('Smartphone Samsung', 650.00, '2023-03-10'),
+postgres-# ('Office Chair', 200.00, '2023-04-05'),
+postgres-# ('Wooden Desk', 350.00, '2023-06-22'),
+postgres-# ('T-shirt', 25.00, '2023-07-12'),
+postgres-# ('Jeans', 45.00, '2023-09-03'),
+postgres-# ('Running Shoes', 90.00, '2023-11-08'),
+postgres-# ('Laptop Lenovo', 870.00, '2024-02-17'),
+postgres-# ('Smartphone Samsung', 680.00, '2024-04-09'),
+postgres-# ('Dining Table', 500.00, '2024-07-21'),
+postgres-# ('Headphones Sony', 120.00, '2024-09-14'),
+postgres-# ('Office Chair', 210.00, '2024-11-30');
+INSERT 0 12
+postgres=#
+postgres=# SELECT
+postgres-#     EXTRACT(YEAR FROM sale_date) AS year,
+postgres-#     EXTRACT(QUARTER FROM sale_date) AS quarter,
+postgres-#     COUNT(*) AS total_sales,
+postgres-#     SUM(amount) AS total_revenue
+postgres-# FROM sales
+postgres-# GROUP BY EXTRACT(YEAR FROM sale_date), EXTRACT(QUARTER FROM sale_date)
+postgres-# ORDER BY year, quarter;
+ year | quarter | total_sales | total_revenue
+------+---------+-------------+---------------
+ 2023 |       1 |           2 |       1500.00
+ 2023 |       2 |           2 |        550.00
+ 2023 |       3 |           2 |         70.00
+ 2023 |       4 |           1 |         90.00
+ 2024 |       1 |           1 |        870.00
+ 2024 |       2 |           1 |        680.00
+ 2024 |       3 |           2 |        620.00
+ 2024 |       4 |           1 |        210.00
+(8 rows)
+
+
+postgres=#
+postgres=#
+postgres=# SELECT
+postgres-#     CASE
+postgres-#         WHEN age < 30 THEN 'Under 30'
+postgres-#         WHEN age BETWEEN 30 AND 50 THEN '30-50'
+postgres-#         ELSE 'Over 50'
+postgres-#     END AS age_group,
+postgres-#     COUNT(*) AS employee_count,
+postgres-#     AVG(salary) AS avg_salary
+postgres-# FROM employees
+postgres-# GROUP BY
+postgres-#     CASE
+postgres-#         WHEN age < 30 THEN 'Under 30'
+postgres-#         WHEN age BETWEEN 30 AND 50 THEN '30-50'
+postgres-#         ELSE 'Over 50'
+postgres-#     END;
+ age_group | employee_count |     avg_salary
+-----------+----------------+--------------------
+ Under 30  |              2 | 55000.000000000000
+ 30-50     |              6 | 58500.000000000000
+(2 rows)
+
+
+postgres=#
+postgres=# CREATE TABLE product_reviews (
+postgres(#     review_id SERIAL PRIMARY KEY,
+postgres(#     product_id INT NOT NULL,
+postgres(#     rating NUMERIC(2,1) NOT NULL,
+postgres(#     review_text TEXT,
+postgres(#     review_date DATE
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=# INSERT INTO product_reviews (product_id, rating, review_text, review_date)
+postgres-# VALUES
+postgres-# (1, 5.0, 'Excellent!', '2024-01-01'),
+postgres-# (1, 4.0, 'Good', '2024-01-02'),
+postgres-# (1, 5.0, 'Perfect', '2024-01-03'),
+postgres-# (1, 4.5, 'Very good', '2024-01-04'),
+postgres-# (1, 4.0, 'Nice', '2024-01-05'),
+postgres-# (1, 5.0, 'Loved it', '2024-01-06'),
+postgres-# (1, 4.5, 'Great', '2024-01-07'),
+postgres-# (1, 4.0, 'Good quality', '2024-01-08'),
+postgres-# (1, 5.0, 'Excellent', '2024-01-09'),
+postgres-# (1, 4.0, 'Satisfied', '2024-01-10'),
+postgres-# (1, 4.5, 'Happy', '2024-01-11'),
+postgres-# (1, 5.0, 'Amazing', '2024-01-12'),
+postgres-# (2, 4.5, 'Good', '2024-02-01'),
+postgres-# (2, 4.0, 'Nice', '2024-02-02'),
+postgres-# (2, 5.0, 'Excellent', '2024-02-03'),
+postgres-# (2, 4.5, 'Great', '2024-02-04'),
+postgres-# (2, 4.0, 'Good', '2024-02-05'),
+postgres-# (2, 5.0, 'Perfect', '2024-02-06'),
+postgres-# (2, 4.5, 'Very good', '2024-02-07'),
+postgres-# (2, 4.0, 'Nice', '2024-02-08');
+INSERT 0 20
+postgres=#
+postgres=# SELECT
+postgres-#     department,
+postgres-#     COUNT(*) AS employee_count
+postgres-# FROM employees
+postgres-# GROUP BY department
+postgres-# HAVING COUNT(*) > 5;
+ department | employee_count
+------------+----------------
+(0 rows)
+
+
+postgres=#
+postgres=# -- Find products with average rating above 4.0
+postgres=# SELECT
+postgres-#     product_id,
+postgres-#     AVG(rating) AS avg_rating,
+postgres-#     COUNT(*) AS review_count
+postgres-# FROM product_reviews
+postgres-# GROUP BY product_id
+postgres-# HAVING AVG(rating) > 4.0 AND COUNT(*) >= 10;
+ product_id |     avg_rating     | review_count
+------------+--------------------+--------------
+          1 | 4.5416666666666667 |           12
+(1 row)
+
+
+postgres=#
+postgres=# SELECT department, AVG(salary) AS dept_avg_salary
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department |  dept_avg_salary
+------------+--------------------
+ Finance    | 71000.000000000000
+ Sales      | 51000.000000000000
+ IT         | 62500.000000000000
+ HR         | 46000.000000000000
+(4 rows)
+
+
+postgres=#
+postgres-#
+postgres=# SELECT
+postgres-#     emp_id,
+postgres-#     name
+postgres-#     department,
+postgres-#     salary,
+postgres-#     AVG(salary) OVER (PARTITION BY department) AS dept_avg_salary
+postgres-# FROM employees;
+ emp_id | first_name | department |  salary  |  dept_avg_salary
+--------+------------+------------+----------+--------------------
+      7 | George     | Finance    | 70000.00 | 71000.000000000000
+      8 | Hannah     | Finance    | 72000.00 | 71000.000000000000
+      3 | Charlie    | HR         | 45000.00 | 46000.000000000000
+      4 | Diana      | HR         | 47000.00 | 46000.000000000000
+      5 | Ethan      | IT         | 60000.00 | 62500.000000000000
+      6 | Fiona      | IT         | 65000.00 | 62500.000000000000
+      1 | Alice      | Sales      | 50000.00 | 51000.000000000000
+      2 | Bob        | Sales      | 52000.00 | 51000.000000000000
+(8 rows)
+
+
+postgres=#
+postgres=# SELECT
+postgres-#     COUNT(*) AS total_rows,
+postgres-#     COUNT(name) AS non_null_names,
+postgres-#     COUNT(*) - COUNT(name) AS null_names
+postgres-# FROM employees;
+ total_rows | non_null_names | null_names
+------------+----------------+------------
+          8 |              8 |          0
+(1 row)
+
+
+postgres=#
+postgres=# ALTER TABLE employees
+postgres-# ADD COLUMN bonus NUMERIC(10,2);
+ALTER TABLE
+postgres=#
+postgres=# UPDATE employees
+postgres-# SET bonus = CASE emp_id
+postgres-#     WHEN 1 THEN 500
+postgres-#     WHEN 2 THEN 700
+postgres-#     WHEN 3 THEN 0
+postgres-#     WHEN 4 THEN 300
+postgres-#     WHEN 5 THEN 600
+postgres-#     WHEN 6 THEN NULL
+postgres-#     WHEN 7 THEN 800
+postgres-#     WHEN 8 THEN 400
+postgres-# END;
+UPDATE 8
+postgres=#
+postgres=#
+postgres=#
+postgres=# SELECT
+postgres-#     SUM(bonus) AS total_bonus,
+postgres-#     AVG(bonus) AS avg_bonus,
+postgres-#     COUNT(bonus) AS employees_with_bonus
+postgres-# FROM employees;
+ total_bonus |      avg_bonus       | employees_with_bonus
+-------------+----------------------+----------------------
+     3300.00 | 471.4285714285714286 |                    7
+(1 row)
+
+
+postgres=#
