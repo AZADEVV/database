@@ -1,0 +1,417 @@
+postgres=# CREATE TABLE customers (
+postgres(#     customer_id SERIAL PRIMARY KEY,
+postgres(#     name VARCHAR(100),
+postgres(#     email VARCHAR(100)
+postgres(# );
+CREATE TABLE
+postgres=# CREATE TABLE orders (
+postgres(#     order_id SERIAL PRIMARY KEY,
+postgres(#     customer_id INTEGER REFERENCES customers(customer_id),
+postgres(#     order_date DATE,
+postgres(#     total_amount DECIMAL(10,2)
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=#
+postgres=# INSERT INTO customers (name, email)
+postgres-# VALUES
+postgres-# ('Alice Brown', 'alice.brown@example.com'),
+postgres-# ('Bob Smith', 'bob.smith@example.com'),
+postgres-# ('Charlie Adams', 'charlie.adams@example.com'),
+postgres-# ('Diana Clark', 'diana.clark@example.com'),
+postgres-# ('Ethan Davis', 'ethan.davis@example.com');
+INSERT 0 5
+postgres=#
+postgres=# INSERT INTO orders (customer_id, order_date, total_amount)
+postgres-# VALUES
+postgres-# (1, '2024-01-15', 250.00),
+postgres-# (1, '2024-02-10', 150.00),
+postgres-# (2, '2024-01-20', 300.00),
+postgres-# (3, '2024-03-05', 450.00),
+postgres-# (3, '2024-03-25', 200.00),
+postgres-# (4, '2024-02-15', 500.00),
+postgres-# (5, '2024-01-30', 100.00),
+postgres-# (5, '2024-03-10', 150.00);
+INSERT 0 8
+postgres=#
+postgres=# SELECT c.name, c.email, o.order_date, o.total_amount
+postgres-# FROM customers c
+postgres-# INNER JOIN orders o ON c.customer_id = o.customer_id;
+     name      |           email           | order_date | total_amount
+---------------+---------------------------+------------+--------------
+ Alice Brown   | alice.brown@example.com   | 2024-01-15 |       250.00
+ Alice Brown   | alice.brown@example.com   | 2024-02-10 |       150.00
+ Bob Smith     | bob.smith@example.com     | 2024-01-20 |       300.00
+ Charlie Adams | charlie.adams@example.com | 2024-03-05 |       450.00
+ Charlie Adams | charlie.adams@example.com | 2024-03-25 |       200.00
+ Diana Clark   | diana.clark@example.com   | 2024-02-15 |       500.00
+ Ethan Davis   | ethan.davis@example.com   | 2024-01-30 |       100.00
+ Ethan Davis   | ethan.davis@example.com   | 2024-03-10 |       150.00
+(8 rows)
+
+
+postgres=#
+postgres=# SELECT c.name, c.email, o.order_date, o.total_amount
+postgres-# FROM customers c
+postgres-# LEFT JOIN orders o ON c.customer_id = o.customer_id;
+     name      |           email           | order_date | total_amount
+---------------+---------------------------+------------+--------------
+ Alice Brown   | alice.brown@example.com   | 2024-01-15 |       250.00
+ Alice Brown   | alice.brown@example.com   | 2024-02-10 |       150.00
+ Bob Smith     | bob.smith@example.com     | 2024-01-20 |       300.00
+ Charlie Adams | charlie.adams@example.com | 2024-03-05 |       450.00
+ Charlie Adams | charlie.adams@example.com | 2024-03-25 |       200.00
+ Diana Clark   | diana.clark@example.com   | 2024-02-15 |       500.00
+ Ethan Davis   | ethan.davis@example.com   | 2024-01-30 |       100.00
+ Ethan Davis   | ethan.davis@example.com   | 2024-03-10 |       150.00
+(8 rows)
+
+
+postgres=#
+postgres=# SELECT c.name, c.email, o.order_date, o.total_amount
+postgres-# FROM customers c
+postgres-# RIGHT JOIN orders o ON c.customer_id = o.customer_id;
+     name      |           email           | order_date | total_amount
+---------------+---------------------------+------------+--------------
+ Alice Brown   | alice.brown@example.com   | 2024-01-15 |       250.00
+ Alice Brown   | alice.brown@example.com   | 2024-02-10 |       150.00
+ Bob Smith     | bob.smith@example.com     | 2024-01-20 |       300.00
+ Charlie Adams | charlie.adams@example.com | 2024-03-05 |       450.00
+ Charlie Adams | charlie.adams@example.com | 2024-03-25 |       200.00
+ Diana Clark   | diana.clark@example.com   | 2024-02-15 |       500.00
+ Ethan Davis   | ethan.davis@example.com   | 2024-01-30 |       100.00
+ Ethan Davis   | ethan.davis@example.com   | 2024-03-10 |       150.00
+(8 rows)
+
+
+postgres=#
+postgres=#
+postgres=# SELECT c.name, c.email, o.order_date, o.total_amount
+postgres-# FROM customers c
+postgres-# FULL OUTER JOIN orders o ON c.customer_id = o.customer_id;
+     name      |           email           | order_date | total_amount
+---------------+---------------------------+------------+--------------
+ Alice Brown   | alice.brown@example.com   | 2024-01-15 |       250.00
+ Alice Brown   | alice.brown@example.com   | 2024-02-10 |       150.00
+ Bob Smith     | bob.smith@example.com     | 2024-01-20 |       300.00
+ Charlie Adams | charlie.adams@example.com | 2024-03-05 |       450.00
+ Charlie Adams | charlie.adams@example.com | 2024-03-25 |       200.00
+ Diana Clark   | diana.clark@example.com   | 2024-02-15 |       500.00
+ Ethan Davis   | ethan.davis@example.com   | 2024-01-30 |       100.00
+ Ethan Davis   | ethan.davis@example.com   | 2024-03-10 |       150.00
+(8 rows)
+
+
+postgres=#
+postgres=#
+postgres=# SELECT c.name, p.product_name
+postgres-# FROM customers c
+postgres-# CROSS JOIN products p;
+     name      |    product_name
+---------------+--------------------
+ Alice Brown   | Laptop Lenovo
+ Bob Smith     | Laptop Lenovo
+ Charlie Adams | Laptop Lenovo
+ Diana Clark   | Laptop Lenovo
+ Ethan Davis   | Laptop Lenovo
+ Alice Brown   | Smartphone Samsung
+ Bob Smith     | Smartphone Samsung
+ Charlie Adams | Smartphone Samsung
+ Diana Clark   | Smartphone Samsung
+ Ethan Davis   | Smartphone Samsung
+ Alice Brown   | Headphones Sony
+ Bob Smith     | Headphones Sony
+ Charlie Adams | Headphones Sony
+ Diana Clark   | Headphones Sony
+ Ethan Davis   | Headphones Sony
+ Alice Brown   | Office Chair
+ Bob Smith     | Office Chair
+ Charlie Adams | Office Chair
+ Diana Clark   | Office Chair
+ Ethan Davis   | Office Chair
+ Alice Brown   | Wooden Desk
+ Bob Smith     | Wooden Desk
+ Charlie Adams | Wooden Desk
+ Diana Clark   | Wooden Desk
+ Ethan Davis   | Wooden Desk
+ Alice Brown   | Dining Table
+ Bob Smith     | Dining Table
+ Charlie Adams | Dining Table
+ Diana Clark   | Dining Table
+ Ethan Davis   | Dining Table
+ Alice Brown   | T-shirt
+ Bob Smith     | T-shirt
+ Charlie Adams | T-shirt
+ Diana Clark   | T-shirt
+ Ethan Davis   | T-shirt
+ Alice Brown   | Jeans
+ Bob Smith     | Jeans
+postgres=#
+postgres=#
+postgres=# CREATE TABLE order_items (
+postgres(#     order_item_id SERIAL PRIMARY KEY,
+postgres(#     order_id INT REFERENCES orders(order_id) ON DELETE CASCADE,
+postgres(#     product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
+postgres(#     quantity INT NOT NULL
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=# INSERT INTO order_items (order_id, product_id, quantity)
+postgres-# VALUES
+postgres-# (1, 1, 2),
+postgres-# (1, 3, 1),
+postgres-# (2, 2, 1),
+postgres-# (3, 1, 1),
+postgres-# (3, 4, 2),
+postgres-# (4, 5, 1),
+postgres-# (5, 2, 2),
+postgres-# (5, 3, 1),
+postgres-# (6, 1, 1),
+postgres-# (7, 4, 3),
+postgres-# (8, 5, 2);
+INSERT 0 11
+postgres=#
+postgres=#
+postgres=# SELECT c.name, o.order_date, oi.quantity, p.product_name, p.price
+postgres-# FROM customers c
+postgres-# INNER JOIN orders o ON c.customer_id = o.customer_id
+postgres-# INNER JOIN order_items oi ON o.order_id = oi.order_id
+postgres-# INNER JOIN products p ON oi.product_id = p.product_id;
+     name      | order_date | quantity |    product_name    | price
+---------------+------------+----------+--------------------+--------
+ Alice Brown   | 2024-01-15 |        2 | Laptop Lenovo      | 850.00
+ Alice Brown   | 2024-01-15 |        1 | Headphones Sony    | 120.00
+ Alice Brown   | 2024-02-10 |        1 | Smartphone Samsung | 650.00
+ Bob Smith     | 2024-01-20 |        1 | Laptop Lenovo      | 850.00
+ Bob Smith     | 2024-01-20 |        2 | Office Chair       | 200.00
+ Charlie Adams | 2024-03-05 |        1 | Wooden Desk        | 350.00
+ Charlie Adams | 2024-03-25 |        2 | Smartphone Samsung | 650.00
+ Charlie Adams | 2024-03-25 |        1 | Headphones Sony    | 120.00
+ Diana Clark   | 2024-02-15 |        1 | Laptop Lenovo      | 850.00
+ Ethan Davis   | 2024-01-30 |        3 | Office Chair       | 200.00
+ Ethan Davis   | 2024-03-10 |        2 | Wooden Desk        | 350.00
+(11 rows)
+
+
+postgres=#
+postgres=#
+postgres=# ALTER TABLE employees
+postgres-# ADD COLUMN manager_id INT REFERENCES employees(emp_id);
+ALTER TABLE
+postgres=#
+postgres=# UPDATE employees
+postgres-# SET manager_id = CASE emp_id
+postgres-#     WHEN 1 THEN NULL
+postgres-#     WHEN 2 THEN 1
+postgres-#     WHEN 3 THEN NULL
+postgres-#     WHEN 4 THEN 3
+postgres-#     WHEN 5 THEN NULL
+postgres-#     WHEN 6 THEN 5
+postgres-#     WHEN 7 THEN NULL
+postgres-#     WHEN 8 THEN 7
+postgres-# END;
+UPDATE 8
+postgres=#
+postgres=#
+postgres=# SELECT e1.name AS employee, e2.name AS manager
+postgres-# FROM employees e1
+postgres-# LEFT JOIN employees e2 ON e1.manager_id = e2.emp_id;
+ employee | manager
+----------+---------
+ Alice    |
+ Bob      | Alice
+ Charlie  |
+ Diana    | Charlie
+ Ethan    |
+ Fiona    | Ethan
+ George   |
+ Hannah   | George
+(8 rows)
+
+
+postgres=#
+postgres=# SELECT c.name, o.order_date, o.total_amount
+postgres-# FROM customers c
+postgres-# INNER JOIN orders o ON c.customer_id = o.customer_id
+postgres-# WHERE o.order_date >= '2024-01-01'
+postgres-# AND o.total_amount > 100;
+     name      | order_date | total_amount
+---------------+------------+--------------
+ Alice Brown   | 2024-01-15 |       250.00
+ Alice Brown   | 2024-02-10 |       150.00
+ Bob Smith     | 2024-01-20 |       300.00
+ Charlie Adams | 2024-03-05 |       450.00
+ Charlie Adams | 2024-03-25 |       200.00
+ Diana Clark   | 2024-02-15 |       500.00
+ Ethan Davis   | 2024-03-10 |       150.00
+(7 rows)
+
+
+postgres=#
+postgres=#
+postgres=# CREATE TABLE users (
+postgres(#     user_id SERIAL PRIMARY KEY,
+postgres(#     username VARCHAR(50) NOT NULL
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=# CREATE TABLE user_profiles (
+postgres(#     profile_id SERIAL PRIMARY KEY,
+postgres(#     user_id INT REFERENCES users(user_id),
+postgres(#     first_name VARCHAR(50),
+postgres(#     last_name VARCHAR(50),
+postgres(#     phone VARCHAR(20)
+postgres(# );
+CREATE TABLE
+postgres=#
+postgres=# INSERT INTO users (username)
+postgres-# VALUES
+postgres-# ('alice'),
+postgres-# ('bob'),
+postgres-# ('charlie');
+INSERT 0 3
+postgres=#
+postgres=# INSERT INTO user_profiles (user_id, first_name, last_name, phone)
+postgres-# VALUES
+postgres-# (1, 'Alice', 'Brown', '555-1234'),
+postgres-# (2, 'Bob', 'Smith', '555-5678');
+INSERT 0 2
+postgres=#
+postgres=#
+postgres=# SELECT u.username, up.first_name, up.last_name, up.phone
+postgres-# FROM users u
+postgres-# LEFT JOIN user_profiles up ON u.user_id = up.user_id;
+ username | first_name | last_name |  phone
+----------+------------+-----------+----------
+ alice    | Alice      | Brown     | 555-1234
+ bob      | Bob        | Smith     | 555-5678
+ charlie  |            |           |
+(3 rows)
+
+
+postgres=#
+postgres=#
+postgres=#
+postgres=# SELECT * FROM students;
+ student_id | first_name | last_name  | birth_date
+------------+------------+------------+------------
+          1 | Aibek      | Sharshenov | 2002-05-15
+(1 row)
+
+
+postgres=#
+postgres=#
+postgres=# ALTER TABLE enrollments
+postgres-# ADD COLUMN enrollment_date DATE;
+ALTER TABLE
+postgres=#
+postgres=#
+postgres=# SELECT s.first_name, c.course_name, e.enrollment_date, e.grade FROM students s INNER JOIN enrollments e ON s.student_id = e.student_id
+postgres-# INNER JOIN courses c ON e.course_id = c.course_id
+postgres-# WHERE e.grade IS NOT NULL ORDER BY s.first_name, c.course_name;
+ first_name | course_name | enrollment_date | grade
+------------+-------------+-----------------+-------
+(0 rows)
+
+
+postgres=#
+postgres=#
+postgres=#
+postgres=# CREATE INDEX idx_orders_customer_id ON orders(customer_id);
+CREATE INDEX
+postgres=# CREATE INDEX idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX
+postgres=# CREATE INDEX idx_order_items_product_id ON order_items(product_id);
+CREATE INDEX
+postgres=#
+postgres=#
+postgres=# SELECT c.name, o.order_date
+postgres-# FROM customers c
+postgres-# INNER JOIN orders o ON c.customer_id = o.customer_id;
+     name      | order_date
+---------------+------------
+ Alice Brown   | 2024-02-10
+ Alice Brown   | 2024-01-15
+ Bob Smith     | 2024-01-20
+ Charlie Adams | 2024-03-25
+ Charlie Adams | 2024-03-05
+ Diana Clark   | 2024-02-15
+ Ethan Davis   | 2024-03-10
+ Ethan Davis   | 2024-01-30
+(8 rows)
+
+
+postgres=#
+postgres=# SELECT c.name, o.order_date
+postgres-# FROM customers c, orders o;
+     name      | order_date
+---------------+------------
+ Alice Brown   | 2024-01-15
+ Alice Brown   | 2024-02-10
+ Alice Brown   | 2024-01-20
+ Alice Brown   | 2024-03-05
+ Alice Brown   | 2024-03-25
+ Alice Brown   | 2024-02-15
+ Alice Brown   | 2024-01-30
+ Alice Brown   | 2024-03-10
+ Bob Smith     | 2024-01-15
+ Bob Smith     | 2024-02-10
+ Bob Smith     | 2024-01-20
+ Bob Smith     | 2024-03-05
+ Bob Smith     | 2024-03-25
+ Bob Smith     | 2024-02-15
+ Bob Smith     | 2024-01-30
+ Bob Smith     | 2024-03-10
+ Charlie Adams | 2024-01-15
+ Charlie Adams | 2024-02-10
+ Charlie Adams | 2024-01-20
+ Charlie Adams | 2024-03-05
+ Charlie Adams | 2024-03-25
+ Charlie Adams | 2024-02-15
+ Charlie Adams | 2024-01-30
+ Charlie Adams | 2024-03-10
+ Diana Clark   | 2024-01-15
+ Diana Clark   | 2024-02-10
+ Diana Clark   | 2024-01-20
+ Diana Clark   | 2024-03-05
+ Diana Clark   | 2024-03-25
+ Diana Clark   | 2024-02-15
+ Diana Clark   | 2024-01-30
+ Diana Clark   | 2024-03-10
+ Ethan Davis   | 2024-01-15
+ Ethan Davis   | 2024-02-10
+ Ethan Davis   | 2024-01-20
+ Ethan Davis   | 2024-03-05
+ Ethan Davis   | 2024-03-25
+ Ethan Davis   | 2024-02-15
+ Ethan Davis   | 2024-01-30
+ Ethan Davis   | 2024-03-10
+(40 rows)
+
+
+postgres=# SELECT c.name, o.order_date
+postgres-# FROM customers c
+postgres-# INNER JOIN orders o ON c.customer_id = o.customer_id;
+     name      | order_date
+---------------+------------
+ Alice Brown   | 2024-02-10
+ Alice Brown   | 2024-01-15
+ Bob Smith     | 2024-01-20
+ Charlie Adams | 2024-03-25
+ Charlie Adams | 2024-03-05
+ Diana Clark   | 2024-02-15
+ Ethan Davis   | 2024-03-10
+ Ethan Davis   | 2024-01-30
+(8 rows)
+
+
+postgres=# SELECT c.name
+postgres-# FROM customers c
+postgres-# LEFT JOIN orders o ON c.customer_id = o.customer_id
+postgres-# WHERE o.customer_id IS NULL;
+ name
+------
+(0 rows)
+
+
+postgres=#
