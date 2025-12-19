@@ -28,7 +28,7 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/yourusername/grocery-erp.git](https://github.com/yourusername/grocery-erp.git)
+git clone https://github.com/AZADEVV/database/tree/main/grocery_project
 cd grocery-erp
 2. Configure Environment
 It is recommended to use a virtual environment:
@@ -74,16 +74,3 @@ orders & order_items – Sales records.
 expenses – Operational costs (Rent, Utilities, etc.).
 
 Developed for efficient retail management and data-driven decision making.
-
-
-### Как правильно сохранить этот файл:
-1. В PyCharm (или другом редакторе) нажмите правой кнопкой на папку проекта.
-2. Выберите **New -> File**.
-3. Назовите его строго **`README.md`**.
-4. Вставьте скопированный код и сохраните (Ctrl+S).
-
-
-
-**Подсказка:** Чтобы увидеть, как это будет выглядеть красиво, в PyCharm в правом верхнем углу окна с файлом `README.md` нажмите на иконку **"Split"** (вертикальное разделение), и справа появится красивое превью.
-
-Хотите, я помогу составить список функций для следующего раздела **"Future Features"** (например, отчеты в PDF или графики)?
