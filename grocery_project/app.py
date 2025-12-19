@@ -46,24 +46,48 @@ def dashboard():
     return render_template('dashboard.html', stats=stats)
 
 # --- 3. АДМИНКА (Обновленная) ---
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])  # Обязательно добавьте методы!
 def admin():
-    # Получаем данные для выпадающих списков
+    if request.method == 'POST':
+        # Этот блок сработает, когда вы нажмете кнопку "Добавить"
+        data = (
+            request.form['sku'],
+            request.form['name'],
+            request.form['category_id'],
+            request.form['unit_id'],
+            request.form['purchase_price'],
+            request.form['retail_price'],
+            request.form['stock']
+        )
+        query = """
+                INSERT INTO products (sku, product_name, category_id, unit_id, purchase_price, retail_price, stock_quantity)
+                VALUES (%s, %s, %s, %s, %s, %s, %s) \
+                """
+        execute_query(query, data)
+        flash('Товар успешно добавлен!')
+        return redirect(url_for('admin'))  # Перезагружаем страницу после сохранения
+
+    # Этот блок сработает просто при открытии страницы (GET)
     categories = execute_query("SELECT * FROM categories", fetch=True)
     units = execute_query("SELECT * FROM units", fetch=True)
 
-    # Получаем текущий список товаров для таблицы внизу
+    # Убедитесь, что здесь есть p.stock_quantity
     products = execute_query("""
-                             SELECT p.*, c.category_name
+                             SELECT p.product_id,
+                                    p.sku,
+                                    p.product_name,
+                                    p.purchase_price,
+                                    p.retail_price,
+                                    p.stock_quantity,
+                                    c.category_name,
+                                    u.short_name
                              FROM products p
                                       LEFT JOIN categories c ON p.category_id = c.category_id
+                                      LEFT JOIN units u ON p.unit_id = u.unit_id
                              ORDER BY p.product_id DESC
                              """, fetch=True)
 
-    return render_template('admin.html',
-                           categories=categories,
-                           units=units,
-                           products=products)
+    return render_template('admin.html', categories=categories, units=units, products=products)
 
 
 # --- 4. ОФОРМЛЕНИЕ ЗАКАЗА ---
@@ -316,16 +340,6 @@ def directories():
     brands = execute_query("SELECT * FROM brands", fetch=True)
     suppliers = execute_query("SELECT * FROM suppliers", fetch=True)
     return render_template('directories.html', brands=brands, suppliers=suppliers)
-
-@app.route('/admin/add_brand', methods=['POST'])
-def add_brand():
-    execute_query("INSERT INTO brands (brand_name) VALUES (%s)", (request.form['name'],))
-    return redirect(url_for('directories'))
-
-@app.route('/admin/add_supplier', methods=['POST'])
-def add_supplier():
-    execute_query("INSERT INTO suppliers (supplier_name) VALUES (%s)", (request.form['name'],))
-    return redirect(url_for('directories'))
 
 
 @app.route('/set_store/<int:store_id>')

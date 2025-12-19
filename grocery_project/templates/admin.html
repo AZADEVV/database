@@ -4,7 +4,7 @@
 <div class="row mb-4">
     <div class="col-12">
         <h2 class="fw-bold"><i class="fa fa-clipboard-list me-2 text-primary"></i>Управление каталогом</h2>
-        <p class="text-muted small">Добавление товаров и управление категориями без учета остатков</p>
+        <p class="text-muted small">Добавление товаров и управление категориями с учетом остатков</p>
     </div>
 </div>
 
@@ -31,7 +31,7 @@
                 <h5 class="mb-0 fw-bold"><i class="fa fa-plus text-success me-2"></i>Новый товар</h5>
             </div>
             <div class="card-body">
-                <form action="/admin/add_product" method="POST">
+                <form action="/admin" method="POST">
 
                     <div class="row mb-3">
                         <div class="col-md-8">
@@ -64,19 +64,17 @@
                     </div>
 
                     <div class="row mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold text-secondary">Себестоимость (закупка)</label>
-                            <div class="input-group">
-                                <input type="number" step="0.01" name="purchase_price" class="form-control" required>
-                                <span class="input-group-text">сом</span>
-                            </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-secondary">Себестоимость</label>
+                            <input type="number" step="0.01" name="purchase_price" class="form-control" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label small fw-bold text-success">Цена продажи</label>
-                            <div class="input-group">
-                                <input type="number" step="0.01" name="retail_price" class="form-control" required>
-                                <span class="input-group-text">сом</span>
-                            </div>
+                            <input type="number" step="0.01" name="retail_price" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-primary">В наличии (остаток)</label>
+                            <input type="number" step="0.001" name="stock" class="form-control border-primary" placeholder="0" required>
                         </div>
                     </div>
 
@@ -96,29 +94,33 @@
     <div class="card-body p-0">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
-                <tr>
-                    <th class="ps-4">Артикул</th>
-                    <th>Наименование</th>
-                    <th>Категория</th>
-                    <th>Закупка</th>
-                    <th class="text-end pe-4">Цена продажи</th>
-                </tr>
+            <tr>
+                <th class="ps-4">Артикул</th>
+                <th>Наименование</th>
+                <th>Категория</th>
+                <th>Закупка</th>
+                <th class="text-end pe-4">Цена продажи</th>
+                <th class="text-center">В наличии</th>
+            </tr>
             </thead>
             <tbody>
-                {% for p in products %}
-                <tr>
-                    <td class="ps-4 text-muted"><code>{{ p.sku }}</code></td>
-                    <td class="fw-bold text-dark">{{ p.product_name }}</td>
-                    <td><span class="badge bg-light text-dark border">{{ p.category_name }}</span></td>
-                    <td class="text-secondary">{{ p.purchase_price }} сом</td>
-                    <td class="text-end pe-4 fw-bold text-primary">{{ p.retail_price }} сом</td>
-                </tr>
-                {% endfor %}
-                {% if not products %}
-                <tr>
-                    <td colspan="5" class="text-center py-5 text-muted">Товаров пока нет. Создайте первый товар!</td>
-                </tr>
-                {% endif %}
+            {% for p in products %}
+            <tr>
+                <td class="ps-4 text-muted"><code>{{ p.sku }}</code></td>
+                <td class="fw-bold text-dark">{{ p.product_name }}</td>
+                <td><span class="badge bg-light text-dark border">{{ p.category_name }}</span></td>
+                <td class="text-secondary">{{ p.purchase_price }} сом</td>
+                <td class="text-end pe-4 fw-bold text-primary">{{ p.retail_price }} сом</td>
+                <td class="text-center fw-bold {% if p.stock_quantity < 5 %}text-danger{% endif %}">
+                    {{ p.stock_quantity }}
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not products %}
+            <tr>
+                <td colspan="6" class="text-center py-5 text-muted">Товаров пока нет. Создайте первый товар!</td>
+            </tr>
+            {% endif %}
             </tbody>
         </table>
     </div>

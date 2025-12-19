@@ -1,6 +1,3 @@
-
--- 0. ПОДГОТОВКА (ОЧИСТКА)
-
 DROP VIEW IF EXISTS view_sales_analysis;
 DROP TABLE IF EXISTS write_offs CASCADE;
 DROP TABLE IF EXISTS expenses CASCADE;
@@ -10,10 +7,7 @@ DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS employees CASCADE;
 DROP TABLE IF EXISTS positions CASCADE;
 DROP TABLE IF EXISTS stores CASCADE;
-DROP TABLE IF EXISTS customers CASCADE;
 DROP TABLE IF EXISTS promotions CASCADE;
-DROP TABLE IF EXISTS suppliers CASCADE;
-DROP TABLE IF EXISTS brands CASCADE;
 DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS units CASCADE;
 
@@ -35,21 +29,6 @@ CREATE TABLE categories
     parent_category_id INT REFERENCES categories (category_id)
 );
 
-CREATE TABLE brands
-(
-    brand_id       SERIAL PRIMARY KEY,
-    brand_name     VARCHAR(100) NOT NULL,
-    country_origin VARCHAR(50)
-);
-
-CREATE TABLE suppliers
-(
-    supplier_id   SERIAL PRIMARY KEY,
-    supplier_name VARCHAR(100) NOT NULL,
-    contact_name  VARCHAR(100),
-    phone         VARCHAR(20),
-    city          VARCHAR(50)
-);
 
 CREATE TABLE stores
 (
@@ -78,14 +57,6 @@ CREATE TABLE employees
     salary      NUMERIC(12, 2)
 );
 
-CREATE TABLE customers
-(
-    customer_id      SERIAL PRIMARY KEY,
-    full_name        VARCHAR(100),
-    phone            VARCHAR(20) UNIQUE,
-    bonus_points     INT           DEFAULT 0,
-    discount_percent NUMERIC(4, 2) DEFAULT 0
-);
 
 -- 3. ТОВАРЫ И ПРОДАЖИ
 
@@ -96,9 +67,7 @@ CREATE TABLE products
     sku            VARCHAR(50) UNIQUE NOT NULL,
     product_name   VARCHAR(255)       NOT NULL,
     category_id    INT REFERENCES categories (category_id),
-    brand_id       INT REFERENCES brands (brand_id),
     unit_id        INT REFERENCES units (unit_id),
-    supplier_id    INT REFERENCES suppliers (supplier_id),
     purchase_price NUMERIC(12, 2)     NOT NULL, -- Закупка
     retail_price   NUMERIC(12, 2)     NOT NULL, -- Розница
     stock_quantity NUMERIC(12, 3) DEFAULT 0
@@ -117,7 +86,6 @@ CREATE TABLE orders
 (
     order_id         SERIAL PRIMARY KEY,
     order_timestamp  TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
-    customer_id      INT REFERENCES customers (customer_id),
     employee_id      INT REFERENCES employees (employee_id),
     store_id         INT REFERENCES stores (store_id),
     total_amount_net NUMERIC(12, 2) DEFAULT 0,
@@ -173,8 +141,6 @@ VALUES ('Globus Center', 'Бишкек', 'Чуй 100'),
 INSERT INTO positions (title)
 VALUES ('Кассир'),
        ('Управляющий');
-INSERT INTO suppliers (supplier_name, city)
-VALUES ('FreshFarm', 'Бишкек');
 
 INSERT INTO products (sku, product_name, category_id, unit_id, purchase_price, retail_price, stock_quantity)
 VALUES ('SKU001', 'Яблоки', 1, 1, 80.00, 120.00, 500),
@@ -183,9 +149,6 @@ VALUES ('SKU001', 'Яблоки', 1, 1, 80.00, 120.00, 500),
 INSERT INTO employees (full_name, position_id, store_id, salary)
 VALUES ('Иван Иванов', 1, 1, 35000),
        ('Эрмек А.', 1, 2, 30000);
-
-INSERT INTO orders (customer_id, employee_id, store_id, total_amount_net, payment_method)
-VALUES (NULL, 1, 1, 315.00, 'card');
 
 INSERT INTO order_items (order_id, product_id, quantity, unit_price)
 VALUES (1, 1, 2, 120.00),
